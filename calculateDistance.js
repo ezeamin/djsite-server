@@ -16,7 +16,8 @@ const calculateDistance = async (ubicacion) => {
 
   let data;
   request(options, async (error, response, body) => {
-    data = await body.json();
+    console.log(body);
+    data = body;
   });
 
   // const res = await fetch(
