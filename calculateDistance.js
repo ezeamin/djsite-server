@@ -1,18 +1,30 @@
 const fetch = require("node-fetch");
 
+const request = require("request");
+
 const calculateDistance = async (ubicacion) => {
-//   const latCasa = -26.818016;
-//   const longCasa = -65.267137;
-
-  const origin = "Av.%20Aconquija%20100,Yerba%20Buena,Tucuman"
+  const origin = "Av.%20Aconquija%20100,Yerba%20Buena,Tucuman";
   const destination = encodeURI(ubicacion);
-  
-  const res = await fetch(
-    `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`
-  );
-  const data = await res.json();
 
-  console.log(data);
+  var options = {
+    proxy: process.env.QUOTAGUARDSTATIC_URL,
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`,
+    headers: {
+      "User-Agent": "node.js",
+    },
+  };
+
+  let data;
+  request(options, async (error, response, body) => {
+    data = await body.json();
+  });
+
+  // const res = await fetch(
+  //   `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`
+  // );
+  // const data = await res.json();
+
+  // console.log(data);
 
   try {
     const value = Number.parseFloat(
