@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const calculateDistance = require("./calculateDistance");
 const cors = require("cors");
 const validateEntries = require("./validateEntries");
+const sendMail = require("./sendMail");
 
 const app = express();
 
@@ -54,7 +55,7 @@ app.post("/", async (req, res) => {
   let col = "B",
     row = "3";
   let add = 0;
-  const { locData, tiempo, servicio, humo } = req.body;
+  const { fecha, turno, locData, tiempo, servicio, humo } = req.body;
 
   if (!validateEntries(req.body)) {
     return res.status(400).json({
@@ -135,6 +136,11 @@ app.post("/", async (req, res) => {
   const value = Number.parseInt(getRows.data.values[0]) + add;
 
   res.json(value);
+
+  if(!fecha) fecha = "N/A";
+  if(!turno) turno = "N/A";
+  
+  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value);
 });
 
 app.listen(app.get("port"), (req, res) =>
