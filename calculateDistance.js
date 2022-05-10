@@ -15,10 +15,12 @@ const calculateDistance = async (ubicacion) => {
   };
 
   let data;
-  request(options, async (error, response, body) => {
-    console.log(body);
+  const body = request(options,(error, response, body) => {
+    // console.log(body);
     data = body;
   });
+
+  console.log(body)
 
   // const res = await fetch(
   //   `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`
