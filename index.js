@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://djezeamin.netlify.app"],
+    origin: ["http://localhost:3000", "https://djezeamin.netlify.app", "https://djezeamin.com", "http://djezeamin.com"],
   })
 );
 
@@ -55,8 +55,6 @@ app.post("/", async (req, res) => {
     row = "3";
   let add = 0;
   const { locData, tiempo, servicio, humo } = req.body;
-
-  console.log(req.body);
 
   if (!validateEntries(req.body)) {
     return res.status(400).json({
