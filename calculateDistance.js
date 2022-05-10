@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const request = require("request");
+const request = require("request-promise-native");
 
 const calculateDistance = async (ubicacion) => {
   const origin = "Av.%20Aconquija%20100,Yerba%20Buena,Tucuman";
