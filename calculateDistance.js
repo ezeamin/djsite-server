@@ -20,7 +20,7 @@ const calculateDistance = async (ubicacion) => {
   //   `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`
   // );
 
-  const data = body.json();
+  const data = await body.json();
   console.log(data);
 
   try {
