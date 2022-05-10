@@ -57,6 +57,8 @@ app.post("/", async (req, res) => {
   let add = 0;
   const { fecha, turno, locData, tiempo, servicio, humo } = req.body;
 
+  console.log(req.body);
+
   if (!validateEntries(req.body)) {
     return res.status(400).json({
       message: "Seleccioná todos los datos",
@@ -139,7 +141,7 @@ app.post("/", async (req, res) => {
 
   if(!fecha) fecha = "N/A";
   if(!turno) turno = "N/A";
-  
+
   sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value);
 });
 
