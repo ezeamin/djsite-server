@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "*",
+    origin: ["http://localhost:3000", "https://djezeamin.netlify.app"],
   })
 );
 
