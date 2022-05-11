@@ -148,7 +148,10 @@ app.post("/", async (req, res) => {
 
   const value = Number.parseInt(getRows.data.values[0]) + add;
 
-  res.json(value);
+  res.json({
+    value,
+    ubicacion,
+  });
 
   if (!fecha) fecha = "N/A";
   if (!turno) turno = "N/A";
