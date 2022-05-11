@@ -7,7 +7,7 @@ const calculateDistance = require("./calculateDistance");
 const cors = require("cors");
 const validateEntries = require("./validateEntries");
 const sendMail = require("./sendMail");
-const Sniffr = require("sniffr");
+const parser = require("ua-parser-js");
 
 const app = express();
 
@@ -148,8 +148,6 @@ app.post("/", async (req, res) => {
 
   const value = Number.parseInt(getRows.data.values[0]) + add;
 
-  console.log(value, ubicacion)
-
   res.json({
     value,
     ubicacion,
@@ -159,10 +157,9 @@ app.post("/", async (req, res) => {
   if (!turno) turno = "N/A";
 
   const userAgent = req.headers["user-agent"];
-  const s = new Sniffr();
-  s.sniff(userAgent);
+  const userData = parser(userAgent);
 
-  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
+  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, userData);
 });
 
 app.get("/", (req, res) => {

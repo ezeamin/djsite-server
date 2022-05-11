@@ -35,9 +35,9 @@ const sendMail = (
         Servicio: ${servicio}\n
         Humo: ${humo ? "Si" : "No"}\n\n
         El presupuesto es de: $${value}\n\n
-        OS: ${userAgent.os.name}\n
+        OS: ${userAgent.os.name} ${userAgent.os.version}\n
         Navegador: ${userAgent.browser.name}\n
-        Dispositivo: ${userAgent.device.name}\n`,
+        Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${userAgent.device.type})\n`,
   };
 
   transporter.sendMail(mailOptions);
