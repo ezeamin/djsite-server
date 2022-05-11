@@ -157,7 +157,7 @@ app.post("/", async (req, res) => {
   const s = new Sniffr();
   s.sniff(userAgent);
 
-  //sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
+  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
 });
 
 app.get("/", (req, res) => {
