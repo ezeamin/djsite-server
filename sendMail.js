@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const formatDate = require("./formatDate");
 
 const sendMail = (
   fecha,
@@ -23,25 +24,26 @@ const sendMail = (
     },
   });
 
-  // format date showing week day
-  const formatFecha = `${fecha.getDate()} ${fecha.split("-")[2]} ${fecha.getMonth()} (${fecha.split("-")[2]}/${fecha.split("-")[1]}/${fecha.split("-")[0]})`;
-
   const mailOptions = {
     from: "ezequielamin@outlook.com",
     to: "ezequielamin@outlook.com",
     subject: "Nueva solicitud de presupuesto",
     text: `Hola Eze, solicitaron un nuevo presupuesto:\n
-        Fecha: ${formatFecha}\n
+        Fecha: ${formatDate(fecha)}\n
         Turno: ${turno}\n
         Ubicación: ${locData} (${ubicacion} km)\n
-        (https://www.google.com/maps/search/?api=1&query=${encodeURI(locData)})\n
+        (https://www.google.com/maps/search/?api=1&query=${encodeURI(
+          locData
+        )})\n
         Tiempo: ${tiempo} horas\n
         Servicio: ${servicio}\n
         Humo: ${humo ? "Si" : "No"}\n\n
         El presupuesto es de: $${value}\n\n
         OS: ${userAgent.os.name} ${userAgent.os.version}\n
         Navegador: ${userAgent.browser.name} ${userAgent.browser.version}\n
-        Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${userAgent.device.type})\n`,
+        Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${
+      userAgent.device.type
+    })\n`,
   };
 
   transporter.sendMail(mailOptions);
