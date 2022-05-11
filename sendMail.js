@@ -35,7 +35,7 @@ const sendMail = (
         Servicio: ${servicio}\n
         Humo: ${humo ? "Si" : "No"}\n\n
         El presupuesto es de: $${value}\n\n
-        OS: ${userAgent.os}\n
+        OS: ${JSON.stringify(userAgent.os)}\n
         Navegador: ${userAgent.browser}\n
         Dispositivo: ${userAgent.device}\n`,
   };

@@ -134,6 +134,8 @@ app.post("/", async (req, res) => {
     row = Number.parseInt(row) - 1 + "";
   }
 
+  console.log("row:", row, "col:", col, "add:", add);
+
   const range = `Hoja1!${col}${row}`;
   const getRows = await googleSheets.spreadsheets.values.get({
     auth,
@@ -151,6 +153,8 @@ app.post("/", async (req, res) => {
   const userAgent = req.headers["user-agent"];
   const s = new Sniffr();
   s.sniff(userAgent);
+
+  console.log(s);
 
   sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
 });
