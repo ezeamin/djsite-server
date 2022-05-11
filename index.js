@@ -79,12 +79,12 @@ app.post("/", async (req, res) => {
     });
   }
 
-  switch (Number.parseInt(tiempo)) {
-    case 5: {
+  switch (tiempo) {
+    case "5": {
       add += horaExtra;
       break;
     }
-    case 6: {
+    case "6": {
       col = "C";
       break;
     }
@@ -153,8 +153,6 @@ app.post("/", async (req, res) => {
   const userAgent = req.headers["user-agent"];
   const s = new Sniffr();
   s.sniff(userAgent);
-
-  console.log(s);
 
   sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
 });
