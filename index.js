@@ -78,6 +78,11 @@ app.post("/", async (req, res) => {
       message: "No se puede calcular la distancia al punto ingresado",
     });
   }
+  else if (ubicacion >= 40) {
+    return res.status(400).json({
+      message: "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
+    });
+  }
 
   switch (tiempo) {
     case "5": {
@@ -152,7 +157,11 @@ app.post("/", async (req, res) => {
   const s = new Sniffr();
   s.sniff(userAgent);
 
-  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
+  //sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
+});
+
+app.get("/", (req, res) => {
+  res.sendStatus(200); //ping
 });
 
 app.listen(app.get("port"), (req, res) =>

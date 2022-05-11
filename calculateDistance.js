@@ -16,17 +16,14 @@ const calculateDistance = async (ubicacion) => {
 
   const body = request(options);
 
-  // const res = await fetch(
-  //   `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`
-  // );
-
   const data = await body.json();
-  // console.log(data);
 
   try {
-    const value = Number.parseFloat(
-      data.rows[0].elements[0].distance.text.split(" ")[0]
-    );
+    let result = data.rows[0].elements[0].distance.text.split(" ")[0] 
+    if(result.includes(",")) result = result.replace(",", "");
+    
+    const value = Number.parseFloat(result);
+
     return value;
   } catch (e) {
     return 0;
