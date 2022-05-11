@@ -5,7 +5,7 @@ const sendMail = (fecha, turno, locData, ubicacion, tiempo, servicio, humo, valu
         host: "smtp-mail.outlook.com",
         auth: {
           user: "ezequielamin@outlook.com",
-          pass: "Yeya1950",
+          pass: "fjtcywlbsdzwaddq",
         },
         tls: {
           rejectUnauthorized: false,

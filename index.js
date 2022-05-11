@@ -57,7 +57,7 @@ app.post("/", async (req, res) => {
   let add = 0;
   const { fecha, turno, locData, tiempo, servicio, humo } = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
 
   if (!validateEntries(req.body)) {
     return res.status(400).json({
