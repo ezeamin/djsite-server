@@ -37,7 +37,7 @@ const sendMail = (
         Humo: ${humo ? "Si" : "No"}\n\n
         El presupuesto es de: $${value}\n\n
         OS: ${userAgent.os.name} ${userAgent.os.version}\n
-        Navegador: ${userAgent.browser.name}\n
+        Navegador: ${userAgent.browser.name} ${userAgent.browser.version}\n
         Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${userAgent.device.type})\n`,
   };
 

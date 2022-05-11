@@ -75,12 +75,13 @@ app.post("/", async (req, res) => {
 
   if (ubicacion === 0) {
     return res.status(400).json({
-      message: "No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
+      message:
+        "No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
     });
-  }
-  else if (ubicacion >= 40) {
+  } else if (ubicacion >= 40) {
     return res.status(400).json({
-      message: "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
+      message:
+        "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
     });
   }
 
@@ -159,7 +160,17 @@ app.post("/", async (req, res) => {
   const userAgent = req.headers["user-agent"];
   const userData = parser(userAgent);
 
-  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, userData);
+  // sendMail(
+  //   fecha,
+  //   turno,
+  //   locData,
+  //   ubicacion,
+  //   tiempo,
+  //   servicio,
+  //   humo,
+  //   value,
+  //   userData
+  // );
 });
 
 app.get("/", (req, res) => {
