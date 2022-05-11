@@ -1,4 +1,4 @@
-const formatDate = (date) => {
+const formatDate = (fecha) => {
   const date = new Date(
     fecha.split("-")[0],
     Number.parseInt(fecha.split("-")[1]) - 1,
