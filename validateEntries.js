@@ -1,5 +1,7 @@
 const validateEntries = (body) => {
     const expectedKeys = [
+        "fecha",
+        "turno",
         "locData",
         "tiempo",
         "servicio",
