@@ -7,7 +7,7 @@ const formatDate = (fecha) => {
 
   let day = new Intl.DateTimeFormat("es-AR", { weekday: "short" }).format(date);
   day = day.charAt(0).toUpperCase() + day.slice(1);
-  let month = new Intl.DateTimeFormat("es-AR", { month: "short" }).format(date);
+  let month = new Intl.DateTimeFormat("es-AR", { month: "long" }).format(date);
   month = month.charAt(0).toUpperCase() + month.slice(1);
 
   return `${day} ${fecha.split("-")[2]} ${month} (${fecha.split("-")[2]}/${
