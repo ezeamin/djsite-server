@@ -75,7 +75,7 @@ app.post("/", async (req, res) => {
 
   if (ubicacion === 0) {
     return res.status(400).json({
-      message: "No se puede calcular la distancia al punto ingresado",
+      message: "No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
     });
   }
   else if (ubicacion >= 40) {
@@ -147,6 +147,8 @@ app.post("/", async (req, res) => {
   });
 
   const value = Number.parseInt(getRows.data.values[0]) + add;
+
+  console.log(value, ubicacion)
 
   res.json({
     value,
