@@ -160,17 +160,17 @@ app.post("/", async (req, res) => {
   const userAgent = req.headers["user-agent"];
   const userData = parser(userAgent);
 
-  // sendMail(
-  //   fecha,
-  //   turno,
-  //   locData,
-  //   ubicacion,
-  //   tiempo,
-  //   servicio,
-  //   humo,
-  //   value,
-  //   userData
-  // );
+  sendMail(
+    fecha,
+    turno,
+    locData,
+    ubicacion,
+    tiempo,
+    servicio,
+    humo,
+    value,
+    userData
+  );
 });
 
 app.get("/", (req, res) => {
