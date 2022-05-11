@@ -3,12 +3,14 @@ const fetch = require("node-fetch");
 const request = require("request-promise-native");
 
 const calculateDistance = async (ubicacion) => {
-  const origin = "Av.%20Aconquija%20100,Yerba%20Buena,Tucuman";
+  const origin = "Zavalia 1,Yerba Buena,Tucuman";
+
+  const originEncoded = encodeURI(origin);
   const destination = encodeURI(ubicacion);
 
   var options = {
     proxy: process.env.QUOTAGUARDSTATIC_URL,
-    url: `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&key=${process.env.API_KEY}`,
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${originEncoded}&key=${process.env.API_KEY}`,
     headers: {
       "User-Agent": "node.js",
     },
