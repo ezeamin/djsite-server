@@ -7,6 +7,7 @@ const calculateDistance = require("./calculateDistance");
 const cors = require("cors");
 const validateEntries = require("./validateEntries");
 const sendMail = require("./sendMail");
+const Sniffr = require("sniffr");
 
 const app = express();
 
@@ -15,7 +16,12 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://djezeamin.netlify.app", "https://djezeamin.com", "http://djezeamin.com"],
+    origin: [
+      "http://localhost:3000",
+      "https://djezeamin.netlify.app",
+      "https://djezeamin.com",
+      "http://djezeamin.com",
+    ],
   })
 );
 
@@ -139,10 +145,14 @@ app.post("/", async (req, res) => {
 
   res.json(value);
 
-  if(!fecha) fecha = "N/A";
-  if(!turno) turno = "N/A";
+  if (!fecha) fecha = "N/A";
+  if (!turno) turno = "N/A";
 
-  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value);
+  const userAgent = req.headers["user-agent"];
+  const s = new Sniffr();
+  s.sniff(userAgent);
+
+  sendMail(fecha, turno, locData, ubicacion, tiempo, servicio, humo, value, s);
 });
 
 app.listen(app.get("port"), (req, res) =>
