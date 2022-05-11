@@ -8,6 +8,7 @@ const cors = require("cors");
 const validateEntries = require("./validateEntries");
 const sendMail = require("./sendMail");
 const parser = require("ua-parser-js");
+const formatDate = require("./formatDate");
 
 const app = express();
 
@@ -148,10 +149,12 @@ app.post("/", async (req, res) => {
   });
 
   const value = Number.parseInt(getRows.data.values[0]) + add;
+  const formattedDate = formatDate(fecha);
 
   res.json({
     value,
     ubicacion,
+    fecha: formattedDate,
   });
 
   if (!fecha) fecha = "N/A";
@@ -161,7 +164,7 @@ app.post("/", async (req, res) => {
   const userData = parser(userAgent);
 
   sendMail(
-    fecha,
+    formattedDate,
     turno,
     locData,
     ubicacion,

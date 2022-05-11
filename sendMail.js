@@ -29,7 +29,7 @@ const sendMail = (
     to: "ezequielamin@outlook.com",
     subject: "Nueva solicitud de presupuesto",
     text: `Hola Eze, solicitaron un nuevo presupuesto:\n
-        Fecha: ${formatDate(fecha)}\n
+        Fecha: ${fecha}\n
         Turno: ${turno}\n
         Ubicación: ${locData} (${ubicacion} km)\n
         (https://www.google.com/maps/search/?api=1&query=${encodeURI(
