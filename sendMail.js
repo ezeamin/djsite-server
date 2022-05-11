@@ -15,7 +15,7 @@ const sendMail = (
     host: "smtp-mail.outlook.com",
     auth: {
       user: "ezequielamin@outlook.com",
-      pass: "fjtcywlbsdzwaddq",
+      pass: process.env.MAIL_KEY,
     },
     tls: {
       rejectUnauthorized: false,
