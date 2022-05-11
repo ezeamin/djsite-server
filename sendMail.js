@@ -31,6 +31,7 @@ const sendMail = (
         Fecha: ${fecha}\n
         Turno: ${turno}\n
         Ubicación: ${locData} (${ubicacion} km)\n
+        (https://www.google.com/maps/search/?api=1&query=${encodeURI(ubicacion)})\n
         Tiempo: ${tiempo} horas\n
         Servicio: ${servicio}\n
         Humo: ${humo ? "Si" : "No"}\n\n
