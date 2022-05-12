@@ -3,23 +3,25 @@ require("dotenv").config();
 const express = require("express");
 const { google } = require("googleapis");
 const morgan = require("morgan");
-const calculateDistance = require("./calculateDistance");
+const calculateDistance = require("./utils/calculateDistance");
 const cors = require("cors");
-const validateEntries = require("./validateEntries");
-const sendMail = require("./sendMail");
+const validateEntries = require("./utils/validateEntries");
+const sendMail = require("./utils/sendMail");
 const parser = require("ua-parser-js");
-const formatDate = require("./formatDate");
+const formatDate = require("./utils/formatDate");
+const saveData = require("./utils/saveData");
 
 const app = express();
+require("./db/database");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.set("trust proxy", true);
 app.use(morgan("dev"));
 app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://djezeamin.netlify.app",
       "https://djezeamin.com",
       "http://djezeamin.com",
     ],
@@ -72,14 +74,14 @@ app.post("/", async (req, res) => {
     });
   }
 
-  const ubicacion = await calculateDistance(locData);
+  const distancia = await calculateDistance(locData);
 
-  if (ubicacion === 0) {
+  if (distancia === 0) {
     return res.status(400).json({
       message:
         "No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
     });
-  } else if (ubicacion >= 40) {
+  } else if (distancia >= 40) {
     return res.status(400).json({
       message:
         "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
@@ -105,10 +107,10 @@ app.post("/", async (req, res) => {
     }
   }
 
-  if (Number.parseFloat(ubicacion) >= 5) {
+  if (Number.parseFloat(distancia) >= 5) {
     let ascii = col.charCodeAt(0);
 
-    if (Number.parseFloat(ubicacion) >= 10) {
+    if (Number.parseFloat(distancia) >= 10) {
       // tercera columna
       ascii += 2;
       col = String.fromCharCode(ascii);
@@ -153,7 +155,7 @@ app.post("/", async (req, res) => {
 
   res.json({
     value,
-    ubicacion,
+    distancia,
     fecha: formattedDate,
   });
 
@@ -163,11 +165,23 @@ app.post("/", async (req, res) => {
   const userAgent = req.headers["user-agent"];
   const userData = parser(userAgent);
 
+  saveData(
+    req.ip,
+    fecha,
+    turno,
+    locData,
+    distancia,
+    tiempo,
+    servicio,
+    humo,
+    value
+  );
+
   sendMail(
     formattedDate,
     turno,
     locData,
-    ubicacion,
+    distancia,
     tiempo,
     servicio,
     humo,
