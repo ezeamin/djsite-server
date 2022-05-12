@@ -9,7 +9,8 @@ const saveData = async (
   tiempo,
   servicio,
   humo,
-  value
+  value,
+  userData
 ) => {
   const budget = {
     fecha,
@@ -33,6 +34,9 @@ const saveData = async (
   } else {
     const newDocument = new DB({
       ip,
+      os: `${userData.os.name} ${userData.os.version}`,
+      browser: `${userData.browser.name} ${userData.browser.version}`,
+      device: `${userAgent.device.vendor} ${userAgent.device.model} (${userAgent.device.type})`,
       budgets: [budget],
     });
 

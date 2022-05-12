@@ -3,6 +3,9 @@ const { Schema } = mongoose;
 
 const infoSchema = new Schema({
   ip: String,
+  os: String,
+  browser: String,
+  device: String,
   budgets: [
     {
       fecha: String,
