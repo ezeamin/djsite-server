@@ -12,7 +12,7 @@ const fechaSchema = new Schema({
       ubicacion: String,
       servicio: String,
       humo: Boolean,
-      value: Number,
+      price: Number,
       paid: Number,
       extra: String,
       client: {

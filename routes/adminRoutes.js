@@ -21,7 +21,22 @@ const expectedKeys = [
 
 router.put("/event", async (req, res) => {
   const fecha = req.body.fecha;
-  const event = req.body;
+  const event = {
+    turno: req.body.turno,
+    name: req.body.name,
+    start: req.body.start,
+    end: req.body.end,
+    ubicacion: req.body.ubicacion,
+    servicio: req.body.servicio,
+    humo: req.body.humo,
+    price: req.body.price,
+    paid: req.body.paid,
+    extra: req.body.extra,
+    client: {
+      name: req.body.clientName,
+      phone: req.body.clientPhone,
+    },
+  }
 
   if (!validateEntries(req.body, expectedKeys)) {
     return res.status(400).json({
@@ -30,13 +45,11 @@ router.put("/event", async (req, res) => {
   }
 
   try {
-    delete event.fecha;
-
-    const document = await DbFechas.findOne({ fecha: event.fecha });
+    const document = await DbFechas.findOne({ fecha });
 
     if (!document) {
       const newFecha = new DbFechas({
-        fecha: event.fecha,
+        fecha,
         turnos: [event],
       });
 
@@ -49,7 +62,7 @@ router.put("/event", async (req, res) => {
 
     turnos.push(event);
 
-    await DbFechas.updateOne({ fecha: event.fecha }, { turnos });
+    await DbFechas.updateOne({ fecha }, { turnos });
 
     return res.sendStatus(200);
   } catch (err) {
