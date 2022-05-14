@@ -38,26 +38,35 @@ const getData = async () => {
 
 getData();
 
+const expectedKeys = [
+  "fecha",
+  "turno",
+  "locData",
+  "tiempo",
+  "servicio",
+  "humo",
+];
+
 router.post("/", async (req, res) => {
   let col = "B",
     row = "3";
   let add = 0;
-  const { fecha, turno, locData, tiempo, servicio, humo } = req.body;
+  const { fecha, turno, ubicacion, tiempo, servicio, humo } = req.body;
 
   // console.log(req.body);
 
-  if (!validateEntries(req.body)) {
+  if (!validateEntries(req.body, expectedKeys)) {
     return res.status(400).json({
       message: "Seleccioná todos los datos",
     });
   }
 
-  const distancia = await calculateDistance(locData);
+  const distancia = await calculateDistance(ubicacion);
 
   if (distancia === 0) {
     return res.status(400).json({
       message:
-        "No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
+        "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
     });
   } else if (distancia >= 40) {
     return res.status(400).json({
@@ -147,7 +156,7 @@ router.post("/", async (req, res) => {
     req.ip,
     fecha,
     turno,
-    locData,
+    ubicacion,
     distancia,
     tiempo,
     servicio,
@@ -159,7 +168,7 @@ router.post("/", async (req, res) => {
   sendMail(
     formattedDate,
     turno,
-    locData,
+    ubicacion,
     distancia,
     tiempo,
     servicio,

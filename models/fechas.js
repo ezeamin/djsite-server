@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const fechaSchema = new Schema({
   fecha: Date,
-  turno: [
+  turnos: [
     {
       turno: String,
       name: String,

@@ -18,6 +18,7 @@ app.use(
       "http://localhost:3000",
       "https://djezeamin.com",
       "http://djezeamin.com",
+      "admin-djezeamin.netlify.app"
     ],
   })
 );

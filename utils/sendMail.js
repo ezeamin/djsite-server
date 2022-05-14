@@ -24,26 +24,43 @@ const sendMail = (
     },
   });
 
+  let text;
+
+  if (userAgent && userAgent.browser && userAgent.device && userAgent.os) {
+    text = `Hola Eze, solicitaron un nuevo presupuesto:\n
+  Fecha: ${fecha}\n
+  Turno: ${turno}\n
+  Ubicación: ${locData} (${ubicacion} km)\n
+  (https://www.google.com/maps/search/?api=1&query=${encodeURI(locData)})\n
+  Tiempo: ${tiempo} horas\n
+  Servicio: ${servicio}\n
+  Humo: ${humo ? "Si" : "No"}\n\n
+  El presupuesto es de: $${value}\n\n
+  OS: ${userAgent.os.name} ${userAgent.os.version}\n
+  Navegador: ${userAgent.browser.name} ${userAgent.browser.version}\n
+  Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${
+      userAgent.device.type
+    })\n`;
+  } else {
+    text = `Hola Eze, solicitaron un nuevo presupuesto:\n
+  Fecha: ${fecha}\n
+  Turno: ${turno}\n
+  Ubicación: ${locData} (${ubicacion} km)\n
+  (https://www.google.com/maps/search/?api=1&query=${encodeURI(locData)})\n
+  Tiempo: ${tiempo} horas\n
+  Servicio: ${servicio}\n
+  Humo: ${humo ? "Si" : "No"}\n\n
+  El presupuesto es de: $${value}\n\n
+  OS: N/A\n
+  Navegador: N/A\n
+  Dispositivo: N/A\n`;
+  }
+
   const mailOptions = {
     from: "ezequielamin@outlook.com",
     to: "ezequielamin@outlook.com",
     subject: "Nueva solicitud de presupuesto",
-    text: `Hola Eze, solicitaron un nuevo presupuesto:\n
-        Fecha: ${fecha}\n
-        Turno: ${turno}\n
-        Ubicación: ${locData} (${ubicacion} km)\n
-        (https://www.google.com/maps/search/?api=1&query=${encodeURI(
-          locData
-        )})\n
-        Tiempo: ${tiempo} horas\n
-        Servicio: ${servicio}\n
-        Humo: ${humo ? "Si" : "No"}\n\n
-        El presupuesto es de: $${value}\n\n
-        OS: ${userAgent.os.name} ${userAgent.os.version}\n
-        Navegador: ${userAgent.browser.name} ${userAgent.browser.version}\n
-        Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${
-      userAgent.device.type
-    })\n`,
+    text: text,
   };
 
   transporter.sendMail(mailOptions);
