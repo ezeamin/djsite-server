@@ -10,7 +10,7 @@ const sendMail = (
   servicio,
   humo,
   value,
-  userAgent
+  //userAgent
 ) => {
   const transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
@@ -26,7 +26,7 @@ const sendMail = (
 
   let text;
 
-  if (userAgent && userAgent.browser && userAgent.device && userAgent.os) {
+  /*if (userAgent && userAgent.browser && userAgent.device && userAgent.os) {
     text = `Hola Eze, solicitaron un nuevo presupuesto:\n
   Fecha: ${fecha}\n
   Turno: ${turno}\n
@@ -41,7 +41,7 @@ const sendMail = (
   Dispositivo: ${userAgent.device.vendor} ${userAgent.device.model} (${
       userAgent.device.type
     })\n`;
-  } else {
+  } else {*/
     text = `Hola Eze, solicitaron un nuevo presupuesto:\n
   Fecha: ${fecha}\n
   Turno: ${turno}\n
@@ -54,7 +54,7 @@ const sendMail = (
   OS: N/A\n
   Navegador: N/A\n
   Dispositivo: N/A\n`;
-  }
+  //}
 
   const mailOptions = {
     from: "ezequielamin@outlook.com",
