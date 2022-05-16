@@ -149,7 +149,7 @@ router.post("/", async (req, res) => {
   if (!fecha) fecha = "N/A";
   if (!turno) turno = "N/A";
 
-  /*const userAgent = req.headers["user-agent"];
+  const userAgent = req.headers["user-agent"];
   const userData = parser(userAgent);
 
   saveData(
@@ -161,9 +161,9 @@ router.post("/", async (req, res) => {
     tiempo,
     servicio,
     humo,
-    value
+    value,
     userData
-  );*/
+  );
 
   sendMail(
     formattedDate,
@@ -173,8 +173,8 @@ router.post("/", async (req, res) => {
     tiempo,
     servicio,
     humo,
-    value
-    //userData
+    value,
+    userData
   );
 });
 

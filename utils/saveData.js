@@ -34,9 +34,9 @@ const saveData = async (
   } else {
     const newDocument = new DB({
       ip,
-      os: `${userData.os.name} ${userData.os.version}`,
-      browser: `${userData.browser.name} ${userData.browser.version}`,
-      device: `${userAgent.device.vendor} ${userAgent.device.model} (${userAgent.device.type})`,
+      os: `${userData && userData.os.name} ${userData && userData.os.version}`,
+      browser: `${userData && userData.browser.name} ${userData && userData.browser.version}`,
+      device: `${userData && userData.device.vendor} ${userData && userData.device.model} (${userData && userData.device.type})`,
       budgets: [budget],
     });
 
