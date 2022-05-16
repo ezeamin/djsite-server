@@ -138,7 +138,7 @@ router.post("/", async (req, res) => {
   });
 
   const value = Number.parseInt(getRows.data.values[0]) + add;
-  const formattedDate = formatDate(fecha);
+  const formattedDate = formatDate(fecha,"long");
 
   res.json({
     value,

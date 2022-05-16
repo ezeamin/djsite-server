@@ -2,22 +2,27 @@ const express = require("express");
 const router = express.Router();
 
 const DbFechas = require("../models/fechas");
+const DbFechasOld = require("../models/fechasOld");
+const formatDate = require("../utils/formatDate");
+const reverseFormat = require("../utils/reverseFormat");
 const validateEntries = require("../utils/validateEntries");
 
 const expectedKeys = [
-    "name",
-    "fecha",
-    "turno",
-    "ubicacion",
-    "tiempo",
-    "servicio",
-    "humo",
-    "extra",
-    "clientName",
-    "clientPhone",
-    "price",
-    "paid",
-  ];
+  "name",
+  "fecha",
+  "turno",
+  "start",
+  "end",
+  "ubicacion",
+  "tiempo",
+  "servicio",
+  "humo",
+  "extra",
+  "clientName",
+  "clientPhone",
+  "price",
+  "paid",
+];
 
 router.put("/event", async (req, res) => {
   const fecha = req.body.fecha;
@@ -36,7 +41,7 @@ router.put("/event", async (req, res) => {
       name: req.body.clientName,
       phone: req.body.clientPhone,
     },
-  }
+  };
 
   if (!validateEntries(req.body, expectedKeys)) {
     return res.status(400).json({
@@ -67,6 +72,119 @@ router.put("/event", async (req, res) => {
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+router.get("/events", async (req, res) => {
+  try {
+    const document = await DbFechas.find();
+
+    if (!document) {
+      return res.sendStatus(204);
+    }
+
+    //const turnos = document.turnos;
+
+    const data = document.sort((a, b) => {
+      return new Date(a.fecha) - new Date(b.fecha);
+    });
+
+    const dataTurno = data.map((fecha) => {
+      const evento = fecha.toJSON();
+
+      evento.turnos.sort((a, b) => {
+        const startA =
+          Number.parseInt(a.start.split(":")[0]) +
+          Number.parseInt(a.start.split(":")[1] / 60);
+        const startB =
+          Number.parseInt(b.start.split(":")[0]) +
+          Number.parseInt(b.start.split(":")[1] / 60);
+
+        return startA - startB;
+      });
+
+      return evento;
+    });
+
+    const eventos = dataTurno.map((docEvent) => {
+      const evento = docEvent;
+      delete evento.__v;
+
+      evento.formattedFecha = formatDate(evento.fecha, "short");
+      evento.fecha = formatDate(evento.fecha, "/");
+
+      return evento;
+    });
+
+    return res.status(200).json(eventos);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+router.put("/events/old", async (req, res) => {
+  const idFecha = req.body.idFecha;
+  const idEvento = req.body.idEvento;
+  const fechaEvento = req.body.fechaEvento;
+
+  try {
+    const document = await DbFechas.findById(idFecha);
+
+    if (!document) {
+      return res.sendStatus(204);
+    }
+
+    const turnos = document.turnos;
+
+    const evento = turnos.find((turno) => turno._id == idEvento);
+
+    if (!evento) {
+      return res.sendStatus(204);
+    }
+
+    const newEvento = {
+      ...evento,
+    };
+
+    delete newEvento._id;
+
+    const revDate = reverseFormat(fechaEvento);
+    const newDocument = await DbFechasOld.findOne({ fecha: revDate });
+
+    if (!newDocument) {
+      const newFecha = new DbFechasOld({
+        fecha: revDate,
+        año: revDate.split("-")[0],
+        mes: new Date(revDate).getMonth() + 1,
+        turnos: [newEvento],
+      });
+
+      await newFecha.save();
+
+      return res.sendStatus(200);
+    }
+
+    const turnosOld = newDocument.turnos;
+
+    turnosOld.push(newEvento);
+
+    await DbFechasOld.updateOne({ fecha: revDate }, { turnos: turnosOld });
+
+    // delete from fechas
+
+    const index = turnos.findIndex((turno) => turno._id == idEvento);
+
+    turnos.splice(index, 1);
+
+    console.log(turnos)
+
+    if(turnos.lenght === 0) await DbFechas.updateOne({ _id: idFecha }, { turnos });
+    else await DbFechas.deleteOne({ _id: idFecha });
+
+    return res.sendStatus(200);
+  } catch (err) {
     return res.status(500).json(err);
   }
 });
