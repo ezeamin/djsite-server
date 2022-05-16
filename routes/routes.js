@@ -55,127 +55,135 @@ router.post("/", async (req, res) => {
 
   // console.log(req.body);
 
-  if (!validateEntries(req.body, expectedKeys)) {
-    return res.status(400).json({
-      message: "Seleccioná todos los datos",
+  try {
+    if (!validateEntries(req.body, expectedKeys)) {
+      return res.status(400).json({
+        message: "Seleccioná todos los datos",
+      });
+    }
+
+    const distancia = await calculateDistance(ubicacion);
+
+    if (distancia === 0) {
+      return res.status(400).json({
+        message:
+          "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
+      });
+    } else if (distancia >= 40) {
+      return res.status(400).json({
+        message:
+          "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
+      });
+    }
+
+    switch (tiempo) {
+      case "5": {
+        add += horaExtra;
+        break;
+      }
+      case "6": {
+        col = "C";
+        break;
+      }
+      case "Mas": {
+        col = "C";
+        add += horaExtra;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    if (Number.parseFloat(distancia) >= 5) {
+      let ascii = col.charCodeAt(0);
+
+      if (Number.parseFloat(distancia) >= 10) {
+        // tercera columna
+        ascii += 2;
+        col = String.fromCharCode(ascii);
+      } else {
+        //segunda columna
+        ascii += 4;
+        col = String.fromCharCode(ascii);
+      }
+    }
+
+    switch (servicio) {
+      case "Basico": {
+        row = "8";
+        break;
+      }
+      case "Sonido": {
+        row = "6";
+        break;
+      }
+      case "Completo": {
+        row = "4";
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    if (humo) {
+      row = Number.parseInt(row) - 1 + "";
+    }
+
+    const range = `Hoja1!${col}${row}`;
+    const getRows = await googleSheets.spreadsheets.values.get({
+      auth,
+      spreadsheetId,
+      range: range,
     });
-  }
 
-  const distancia = await calculateDistance(ubicacion);
+    const value = Number.parseInt(getRows.data.values[0]) + add;
+    const formattedDate = formatDate(fecha, "long");
 
-  if (distancia === 0) {
-    return res.status(400).json({
+    res.json({
+      value,
+      distancia,
+      fecha: formattedDate,
+    });
+
+    if (!fecha) fecha = "N/A";
+    if (!turno) turno = "N/A";
+
+    const userAgent = req.headers["user-agent"];
+    const userData = parser(userAgent);
+
+    saveData(
+      req.ip,
+      fecha,
+      turno,
+      ubicacion,
+      distancia,
+      tiempo,
+      servicio,
+      humo,
+      value,
+      userData
+    );
+
+    sendMail(
+      formattedDate,
+      turno,
+      ubicacion,
+      distancia,
+      tiempo,
+      servicio,
+      humo,
+      value,
+      userData
+    );
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
       message:
         "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
     });
-  } else if (distancia >= 40) {
-    return res.status(400).json({
-      message:
-        "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
-    });
   }
-
-  switch (tiempo) {
-    case "5": {
-      add += horaExtra;
-      break;
-    }
-    case "6": {
-      col = "C";
-      break;
-    }
-    case "Mas": {
-      col = "C";
-      add += horaExtra;
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  if (Number.parseFloat(distancia) >= 5) {
-    let ascii = col.charCodeAt(0);
-
-    if (Number.parseFloat(distancia) >= 10) {
-      // tercera columna
-      ascii += 2;
-      col = String.fromCharCode(ascii);
-    } else {
-      //segunda columna
-      ascii += 4;
-      col = String.fromCharCode(ascii);
-    }
-  }
-
-  switch (servicio) {
-    case "Basico": {
-      row = "8";
-      break;
-    }
-    case "Sonido": {
-      row = "6";
-      break;
-    }
-    case "Completo": {
-      row = "4";
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  if (humo) {
-    row = Number.parseInt(row) - 1 + "";
-  }
-
-  const range = `Hoja1!${col}${row}`;
-  const getRows = await googleSheets.spreadsheets.values.get({
-    auth,
-    spreadsheetId,
-    range: range,
-  });
-
-  const value = Number.parseInt(getRows.data.values[0]) + add;
-  const formattedDate = formatDate(fecha,"long");
-
-  res.json({
-    value,
-    distancia,
-    fecha: formattedDate,
-  });
-
-  if (!fecha) fecha = "N/A";
-  if (!turno) turno = "N/A";
-
-  const userAgent = req.headers["user-agent"];
-  const userData = parser(userAgent);
-
-  saveData(
-    req.ip,
-    fecha,
-    turno,
-    ubicacion,
-    distancia,
-    tiempo,
-    servicio,
-    humo,
-    value,
-    userData
-  );
-
-  sendMail(
-    formattedDate,
-    turno,
-    ubicacion,
-    distancia,
-    tiempo,
-    servicio,
-    humo,
-    value,
-    userData
-  );
 });
 
 router.get("/", (req, res) => {
