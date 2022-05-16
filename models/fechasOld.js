@@ -12,6 +12,7 @@ const fechasOldSchema = new Schema({
       start: String,
       end: String,
       ubicacion: String,
+      tiempo: String,
       servicio: String,
       humo: Boolean,
       price: Number,
