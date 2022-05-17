@@ -288,4 +288,30 @@ router.put("/event/edit/:fechaId/:eventoId", async (req, res) => {
   }
 });
 
+router.delete("/event/:fechaId/:eventoId", async (req, res) => {
+  try {
+    const document = await DbFechas.findOne({ _id: req.params.fechaId });
+
+    const turnos = document.turnos;
+
+    const index = turnos.findIndex(
+      (turno) => turno._id == req.params.eventoId
+    );
+
+    turnos.splice(index, 1);
+
+    if (turnos.length === 0) {
+      await DbFechas.deleteOne({ _id: req.params.fechaId });
+    } else
+      await DbFechas.updateOne(
+        { _id: req.params.fechaId },
+        { turnos: document.turnos }
+      );
+
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
 module.exports = router;
