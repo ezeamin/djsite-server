@@ -15,7 +15,7 @@ const sendMail = (
   const transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
     auth: {
-      user: "ezequielamin@outlook.com",
+      user: process.env.MAIL_USER,
       pass: process.env.MAIL_KEY,
     },
     tls: {
