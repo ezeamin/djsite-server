@@ -67,12 +67,12 @@ router.post("/", async (req, res) => {
     if (distancia === 0) {
       return res.status(400).json({
         message:
-          "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
+          "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar mas tarde o contactar con Ezequiel.",
       });
-    } else if (distancia >= 40) {
+    } else if (distancia >= 20) {
       return res.status(400).json({
         message:
-          "Revisa la direccion. Es muy lejana (>40km). Si crees que es correcta, contacta con Ezequiel para un presupuesto especial.",
+          "Revisa la direccion. Es muy lejana (>20km). Si aún creés que es correcta, contactá con Ezequiel para un presupuesto especial.",
       });
     }
 
@@ -167,6 +167,7 @@ router.post("/", async (req, res) => {
     );
 
     sendMail(
+      req.ip,
       formattedDate,
       turno,
       ubicacion,
