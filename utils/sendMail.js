@@ -41,8 +41,8 @@ const sendMail = (
   IP: ${ip}\n`;
 
   const mailOptions = {
-    from: "ezequielamin@outlook.com",
-    to: "ezequielamin@outlook.com",
+    from: process.env.MAIL_USER,
+    to: process.env.MAIL_USER,
     subject: "Nueva solicitud de presupuesto",
     text: text,
   };
