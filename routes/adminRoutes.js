@@ -163,15 +163,13 @@ router.put("/events/old", async (req, res) => {
       });
 
       await newFecha.save();
+    } else {
+      const turnosOld = newDocument.turnos;
 
-      return res.sendStatus(200);
+      turnosOld.push(newEvento);
+
+      await DbFechasOld.updateOne({ fecha: revDate }, { turnos: turnosOld });
     }
-
-    const turnosOld = newDocument.turnos;
-
-    turnosOld.push(newEvento);
-
-    await DbFechasOld.updateOne({ fecha: revDate }, { turnos: turnosOld });
 
     // delete from fechas
 
@@ -294,9 +292,7 @@ router.delete("/event/:fechaId/:eventoId", async (req, res) => {
 
     const turnos = document.turnos;
 
-    const index = turnos.findIndex(
-      (turno) => turno._id == req.params.eventoId
-    );
+    const index = turnos.findIndex((turno) => turno._id == req.params.eventoId);
 
     turnos.splice(index, 1);
 
