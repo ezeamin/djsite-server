@@ -179,7 +179,7 @@ router.put("/events/old", async (req, res) => {
 
     console.log(turnos);
 
-    if (turnos.lenght !== 0)
+    if (turnos.length !== 0)
       await DbFechas.updateOne({ _id: idFecha }, { turnos });
     else await DbFechas.deleteOne({ _id: idFecha });
 
