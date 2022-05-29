@@ -17,6 +17,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://djezeamin.com",
+      "https://www.djezeamin.com",
       "https://admin.djezeamin.com",
       "https://djezeamin.vercel.app",
     ],
