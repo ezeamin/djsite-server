@@ -16,6 +16,7 @@ const fechaSchema = new Schema({
       price: Number,
       paid: Number,
       extra: String,
+      isFechaOcupada: Boolean,
       client: {
         name: String,
         phone: String,

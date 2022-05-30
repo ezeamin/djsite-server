@@ -38,6 +38,7 @@ router.put("/event", async (req, res) => {
     price: req.body.price,
     paid: req.body.paid,
     extra: req.body.extra,
+    isFechaOcupada: false,
     client: {
       name: req.body.clientName,
       phone: req.body.clientPhone,
@@ -198,7 +199,6 @@ router.get("/event/:fechaId/:eventoId", async (req, res) => {
       .toJSON();
 
     evento.fecha = reverseFormat(document.fecha, "ISO");
-    console.log(evento);
 
     return res.status(200).json(evento);
   } catch (err) {
@@ -221,6 +221,7 @@ router.put("/event/edit/:fechaId/:eventoId", async (req, res) => {
       price: req.body.price,
       paid: req.body.paid,
       extra: req.body.extra,
+      isFechaOcupada: false,
       client: {
         name: req.body.clientName,
         phone: req.body.clientPhone,
@@ -297,6 +298,138 @@ router.delete("/event/:fechaId/:eventoId", async (req, res) => {
     turnos.splice(index, 1);
 
     if (turnos.length === 0) {
+      await DbFechas.deleteOne({ _id: req.params.fechaId });
+    } else
+      await DbFechas.updateOne(
+        { _id: req.params.fechaId },
+        { turnos: document.turnos }
+      );
+
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
+// fechas ocupadas
+
+router.put("/fechaocupada", async (req, res) => {
+  const fecha = req.body.fecha;
+  const event = {
+    name: req.body.name,
+    turno: req.body.turno,
+    start: "",
+    end: "",
+    ubicacion: "",
+    tiempo: "",
+    servicio: "",
+    humo: "",
+    price: "",
+    paid: "",
+    extra: "",
+    isFechaOcupada: true,
+    client: {
+      name: "",
+      phone: "",
+    },
+  };
+
+  try {
+    const document = await DbFechas.findOne({ fecha });
+
+    if (!document) {
+      const newFecha = new DbFechas({
+        fecha,
+        turnos: [event],
+      });
+
+      await newFecha.save();
+
+      return res.sendStatus(200);
+    }
+
+    const turnos = document.turnos;
+
+    turnos.push(event);
+
+    await DbFechas.updateOne({ fecha }, { turnos });
+
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+
+router.put("/fechaocupada/edit/:fechaId/:eventoId", async (req, res) => {
+  try {
+    const fecha = req.body.fecha;
+    const event = {
+      name: req.body.name,
+      turno: req.body.turno,
+      start: "",
+      end: "",
+      ubicacion: "",
+      tiempo: "",
+      servicio: "",
+      humo: "",
+      price: "",
+      paid: "",
+      extra: "",
+      isFechaOcupada: true,
+      client: {
+        name: "",
+        phone: "",
+      },
+    };
+
+    const document = await DbFechas.findOne({ _id: req.params.fechaId });
+
+    const prevFecha = reverseFormat(document.fecha, "ISO");
+
+    // same date
+    if (prevFecha === fecha) {
+      const turnos = document.turnos;
+
+      const index = turnos.findIndex(
+        (turno) => turno._id == req.params.eventoId
+      );
+
+      turnos[index] = event;
+
+      await DbFechas.updateOne({ _id: req.params.fechaId }, { turnos });
+
+      return res.sendStatus(200);
+    }
+
+    // date changed
+    const newDocument = await DbFechas.findOne({ fecha: fecha });
+
+    if (!newDocument) {
+      const newFecha = new DbFechas({
+        fecha: fecha,
+        turnos: [event],
+      });
+
+      await newFecha.save();
+    } else {
+      const turnos = newDocument.turnos;
+
+      turnos.push(event);
+
+      await DbFechas.updateOne({ fecha: fecha }, { turnos });
+    }
+
+    // delete from fechas
+
+    const index = document.turnos.findIndex(
+      (turno) => turno._id == req.params.eventoId
+    );
+
+    document.turnos.splice(index, 1);
+
+    if (document.turnos.length === 0) {
       await DbFechas.deleteOne({ _id: req.params.fechaId });
     } else
       await DbFechas.updateOne(
