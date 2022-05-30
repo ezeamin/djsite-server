@@ -127,7 +127,7 @@ router.post("/", async (req, res) => {
       }
     }
 
-    if (humo) {
+    if (humo && servicio !== "Basico") {
       row = Number.parseInt(row) - 1 + "";
     }
 
