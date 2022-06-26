@@ -100,11 +100,11 @@ router.post("/", async (req, res) => {
 
       if (Number.parseFloat(distancia) >= 10) {
         // tercera columna
-        ascii += 2;
+        ascii += 4;
         col = String.fromCharCode(ascii);
       } else {
         //segunda columna
-        ascii += 4;
+        ascii += 2;
         col = String.fromCharCode(ascii);
       }
     }
