@@ -140,17 +140,17 @@ router.put("/events/old", async (req, res) => {
 
     const turnos = document.turnos;
 
-    const evento = turnos.find((turno) => turno._id == idEvento);
+    const evento = turnos.find((turno) => turno._id === idEvento);
 
     if (!evento) {
       return res.sendStatus(204);
     }
 
-    const newEvento = {
-      ...evento,
-    };
+    // const newEvento = {
+    //   ...evento,
+    // };
 
-    delete newEvento._id;
+    // delete newEvento._id;
 
     const revDate = reverseFormat(fechaEvento, "");
     const newDocument = await DbFechasOld.findOne({ fecha: revDate });
@@ -160,14 +160,14 @@ router.put("/events/old", async (req, res) => {
         fecha: revDate,
         año: revDate.split("-")[0],
         mes: new Date(revDate).getMonth() + 1,
-        turnos: [newEvento],
+        turnos: [evento],
       });
 
       await newFecha.save();
     } else {
       const turnosOld = newDocument.turnos;
 
-      turnosOld.push(newEvento);
+      turnosOld.push(evento); //
 
       await DbFechasOld.updateOne({ fecha: revDate }, { turnos: turnosOld });
     }
