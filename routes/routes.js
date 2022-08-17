@@ -4,6 +4,7 @@ const router = express.Router();
 const { google } = require("googleapis");
 const parser = require("ua-parser-js");
 const calculateDistance = require("../utils/calculateDistance");
+const checkAvailability = require("../utils/checkAvailability");
 const formatDate = require("../utils/formatDate");
 const saveData = require("../utils/saveData");
 const sendMail = require("../utils/sendMail");
@@ -189,6 +190,17 @@ router.post("/", async (req, res) => {
 
 router.get("/", (req, res) => {
   res.sendStatus(200); //ping
+});
+
+router.put("/availabledate", async (req, res) => {
+  const { date, turno } = req.body;
+
+  const isAvailable = await checkAvailability(date, turno);
+
+  // console.log(date, turno,isAvailable);
+  res.status(200).json({
+    isAvailable,
+  });
 });
 
 module.exports = router;
