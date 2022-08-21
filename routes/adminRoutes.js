@@ -140,7 +140,7 @@ router.put("/events/old", async (req, res) => {
 
     const turnos = document.turnos;
 
-    const evento = turnos.find((turno) => turno._id === idEvento);
+    const evento = turnos.find((turno) => String(turno._id) === idEvento);
 
     if (!evento) {
       return res.sendStatus(204);
@@ -177,8 +177,6 @@ router.put("/events/old", async (req, res) => {
     const index = turnos.findIndex((turno) => turno._id == idEvento);
 
     turnos.splice(index, 1);
-
-    console.log(turnos);
 
     if (turnos.length !== 0)
       await DbFechas.updateOne({ _id: idFecha }, { turnos });
