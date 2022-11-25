@@ -37,7 +37,7 @@ const getData = async () => {
   horaExtra = Number.parseInt(data.data.values[0]);
 };
 
-getData();
+// getData();
 
 const expectedKeys = [
   "fecha",
