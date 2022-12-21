@@ -1,14 +1,15 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const { google } = require("googleapis");
-const parser = require("ua-parser-js");
-const calculateDistance = require("../utils/calculateDistance");
-const checkAvailability = require("../utils/checkAvailability");
-const formatDate = require("../utils/formatDate");
-const saveData = require("../utils/saveData");
-const sendMail = require("../utils/sendMail");
-const validateEntries = require("../utils/validateEntries");
+const { google } = require('googleapis');
+const parser = require('ua-parser-js');
+const calculateDistance = require('../utils/calculateDistance');
+const checkAvailability = require('../utils/checkAvailability');
+const formatDate = require('../utils/formatDate');
+const saveData = require('../utils/saveData');
+const sendMail = require('../utils/sendMail');
+const sendPingMail = require('../utils/sendPingMail');
+const validateEntries = require('../utils/validateEntries');
 
 /* Data */
 
@@ -16,22 +17,22 @@ let auth, client, googleSheets, spreadsheetId, horaExtra;
 
 const getData = async () => {
   auth = new google.auth.GoogleAuth({
-    keyFile: "credentials.json",
-    scopes: "https://www.googleapis.com/auth/spreadsheets",
+    keyFile: 'credentials.json',
+    scopes: 'https://www.googleapis.com/auth/spreadsheets',
   });
 
   // Create client instance for auth
   client = await auth.getClient();
 
   // Instance of Google Sheets API
-  googleSheets = google.sheets({ version: "v4", auth: client });
+  googleSheets = google.sheets({ version: 'v4', auth: client });
 
-  spreadsheetId = "1B49Y0OxgnaJGVxbS1zyQ_KDbCnC8eGEuC82-5_rmErs";
+  spreadsheetId = '1B49Y0OxgnaJGVxbS1zyQ_KDbCnC8eGEuC82-5_rmErs';
 
   const data = await googleSheets.spreadsheets.values.get({
     auth,
     spreadsheetId,
-    range: "Hoja1!I2",
+    range: 'Hoja1!I2',
   });
 
   horaExtra = Number.parseInt(data.data.values[0]);
@@ -40,17 +41,17 @@ const getData = async () => {
 // getData();
 
 const expectedKeys = [
-  "fecha",
-  "turno",
-  "locData",
-  "tiempo",
-  "servicio",
-  "humo",
+  'fecha',
+  'turno',
+  'locData',
+  'tiempo',
+  'servicio',
+  'humo',
 ];
 
-router.post("/", async (req, res) => {
-  let col = "B",
-    row = "3";
+router.post('/', async (req, res) => {
+  let col = 'B',
+    row = '3';
   let add = 0;
   const { fecha, turno, ubicacion, tiempo, servicio, humo } = req.body;
 
@@ -59,7 +60,7 @@ router.post("/", async (req, res) => {
   try {
     if (!validateEntries(req.body, expectedKeys)) {
       return res.status(400).json({
-        message: "Seleccioná todos los datos",
+        message: 'Seleccioná todos los datos',
       });
     }
 
@@ -68,26 +69,26 @@ router.post("/", async (req, res) => {
     if (distancia === 0) {
       return res.status(400).json({
         message:
-          "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar mas tarde o contactar con Ezequiel.",
+          'Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar mas tarde o contactar con Ezequiel.',
       });
     } else if (distancia >= 20) {
       return res.status(400).json({
         message:
-          "Revisa la direccion. Es muy lejana (>20km). Si aún creés que es correcta, contactá con Ezequiel para un presupuesto especial.",
+          'Revisa la direccion. Es muy lejana (>20km). Si aún creés que es correcta, contactá con Ezequiel para un presupuesto especial.',
       });
     }
 
     switch (tiempo) {
-      case "5": {
+      case '5': {
         add += horaExtra;
         break;
       }
-      case "6": {
-        col = "C";
+      case '6': {
+        col = 'C';
         break;
       }
-      case "Mas": {
-        col = "C";
+      case 'Mas': {
+        col = 'C';
         add += horaExtra;
         break;
       }
@@ -111,16 +112,16 @@ router.post("/", async (req, res) => {
     }
 
     switch (servicio) {
-      case "Basico": {
-        row = "8";
+      case 'Basico': {
+        row = '8';
         break;
       }
-      case "Sonido": {
-        row = "6";
+      case 'Sonido': {
+        row = '6';
         break;
       }
-      case "Completo": {
-        row = "4";
+      case 'Completo': {
+        row = '4';
         break;
       }
       default: {
@@ -128,8 +129,8 @@ router.post("/", async (req, res) => {
       }
     }
 
-    if (humo && servicio !== "Basico") {
-      row = Number.parseInt(row) - 1 + "";
+    if (humo && servicio !== 'Basico') {
+      row = Number.parseInt(row) - 1 + '';
     }
 
     const range = `Hoja1!${col}${row}`;
@@ -140,7 +141,7 @@ router.post("/", async (req, res) => {
     });
 
     const value = Number.parseInt(getRows.data.values[0]) + add;
-    const formattedDate = formatDate(fecha, "long");
+    const formattedDate = formatDate(fecha, 'long');
 
     res.json({
       value,
@@ -148,10 +149,10 @@ router.post("/", async (req, res) => {
       fecha: formattedDate,
     });
 
-    if (!fecha) fecha = "N/A";
-    if (!turno) turno = "N/A";
+    if (!fecha) fecha = 'N/A';
+    if (!turno) turno = 'N/A';
 
-    const userAgent = req.headers["user-agent"];
+    const userAgent = req.headers['user-agent'];
     const userData = parser(userAgent);
 
     saveData(
@@ -183,16 +184,18 @@ router.post("/", async (req, res) => {
     console.log(err);
     return res.status(500).json({
       message:
-        "Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.",
+        'Perdon! No se puede calcular la distancia al punto ingresado. Por favor reintentar o contactar con Ezequiel.',
     });
   }
 });
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   res.sendStatus(200); //ping
+  
+  sendPingMail();
 });
 
-router.put("/availabledate", async (req, res) => {
+router.put('/availabledate', async (req, res) => {
   const { date, turno } = req.body;
 
   const isAvailable = await checkAvailability(date, turno);
